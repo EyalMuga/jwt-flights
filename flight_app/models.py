@@ -40,7 +40,7 @@ class Flight(models.Model):
         db_column="total_seats",
         null=False,
         blank=False,
-        validators=[MinValueValidator(0)],
+        validators=[MinValueValidator(0)]
     )
     seats_left = models.IntegerField(
         db_column="seats_left",

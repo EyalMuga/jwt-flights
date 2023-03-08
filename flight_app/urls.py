@@ -11,9 +11,8 @@ from .views import (
     FlightsViewSet,
     OrderViewSet,
 )
-
-
 from rest_framework.routers import DefaultRouter
+
 
 router = DefaultRouter()
 router.register(r"flights", FlightsViewSet, basename="flights")
