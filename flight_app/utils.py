@@ -11,3 +11,4 @@ def parse_datetime_str(datetime_str: str) -> None | datetime:
     except ValueError:
         pass
     return None
+

@@ -72,7 +72,6 @@ class UsersAdminViewSet(viewsets.ReadOnlyModelViewSet):
             Q(first_name__icontains=names[0]) | Q(last_name__icontains=names[0])
         )
 
-
 # Get all flights / by flight_num & search for a specific flight by origin,
 #  destination, origin_date and destination_date range, price range, is_cancelled
 class FlightsViewSet(viewsets.ModelViewSet):
@@ -194,16 +193,20 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    # delete order by order_id only for admin user and delete all tickets related to this order
+    # delete the order and update the flight seats
     def delete(self, request, *args, **kwargs):
         order = self.get_object()
         if not request.user.is_staff:
             if request.user.id != order.user.id:
                 return Response(
-                    {"order_id": "The order is owned by a different user."},
+                    {"order_id" : "The order is owned by a different user."},
                     status=status.HTTP_401_UNAUTHORIZED,
                 )
-        return super().destroy(request, *args, **kwargs)
+        flight = order.flight
+        flight.seats_available += order.num_seats
+        flight.save()
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
     def get_queryset(self):
